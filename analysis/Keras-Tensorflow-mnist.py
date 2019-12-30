@@ -18,7 +18,7 @@ BATCH_SIZE = 200
 MODEL_VERBOSE = 1
 EVALUATE_VERBOSE = 1
 
-# TODO: create_model関数のパラメータの持ち方を改善値、以下リストの重複をなんとかする
+# TODO: create_model関数のパラメータの持ち方を改善し、以下リストの重複をなんとかする
 param_list = [
     [HIDDEN_DENCE_NUM, 'sigmoid', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
      'categorical_crossentropy', 'sgd', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM],
@@ -27,7 +27,7 @@ param_list = [
     [HIDDEN_DENCE_NUM, 'relu', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
      'categorical_crossentropy', 'adam', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM],
     [HIDDEN_DENCE_NUM, 'relu', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
-     'categorical_crossentropy', 'adam', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM, True]
+     'categorical_crossentropy', 'adam', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM, 0.2]
 ]
 
 def create_model(hid_dence_num, hid_activation, pixcel_size, output_dence_num, output_activation, loss, optimizer, metrics, drop_rate=None):
