@@ -13,31 +13,35 @@ RGB_NUM = 255
 HIDDEN_DENCE_NUM = 512
 OUTPUT_DENCE_NUM = 10
 PIXCEL_SIZE = 784
+LOSS_FUNC = 'categorical_crossentropy'
+METRICS = ['accuracy']
 EPOCH_NUM = 10
 BATCH_SIZE = 200
 MODEL_VERBOSE = 1
 EVALUATE_VERBOSE = 1
 
-# TODO: create_model関数のパラメータの持ち方を改善し、以下リストの重複をなんとかする
 param_list = [
-    [HIDDEN_DENCE_NUM, 'sigmoid', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
-     'categorical_crossentropy', 'sgd', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM],
-    [HIDDEN_DENCE_NUM, 'relu', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
-     'categorical_crossentropy', 'sgd', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM],
-    [HIDDEN_DENCE_NUM, 'relu', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
-     'categorical_crossentropy', 'adam', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM],
-    [HIDDEN_DENCE_NUM, 'relu', PIXCEL_SIZE, OUTPUT_DENCE_NUM, 'softmax',
-     'categorical_crossentropy', 'adam', ['accuracy'], BATCH_SIZE, MODEL_VERBOSE, EPOCH_NUM, 0.2]
+    ['sigmoid', 'softmax', 'sgd'],
+    ['relu', 'softmax', 'sgd'],
+    ['relu', 'softmax', 'adam'],
+    ['relu', 'softmax', 'adam', 0.2]
 ]
 
-def create_model(hid_dence_num, hid_activation, pixcel_size, output_dence_num, output_activation, loss, optimizer, metrics, drop_rate=None):
+
+def create_model(hid_activation, output_activation, optimizer,
+                 drop_rate=None,
+                 hid_dence_num=HIDDEN_DENCE_NUM,
+                 output_dence_num=OUTPUT_DENCE_NUM,
+                 pixcel_size=PIXCEL_SIZE,
+                 loss=LOSS_FUNC,
+                 metrics=METRICS):
     '''モデルを生成する'''
 
     model = keras.models.Sequential()
     # Dense = 層 activation = 活性化関数
     # 隠れ層
-    model.add(keras.layers.Dense(hid_dence_num,
-                                 activation=hid_activation, input_shape=(pixcel_size,)))
+    model.add(keras.layers.Dense(
+        hid_dence_num, activation=hid_activation, input_shape=(pixcel_size,)))
     if not drop_rate is None:
         model.add(keras.layers.core.Dropout(drop_rate))
     # 出力層(いくつかのカテゴライズを行う場合はsoftmaxを使う)
@@ -47,6 +51,7 @@ def create_model(hid_dence_num, hid_activation, pixcel_size, output_dence_num, o
     return model
 
 
+#TODO: 処理を関数にまとめただけ。必要な汎用化を行う。
 def plot(X_train, y_train):
     '''画像を表示する'''
 
@@ -80,7 +85,14 @@ def main():
     score_dict = {}
     for no, param in enumerate(param_list):
         model = create_model(*param)
-        model.fit(X_train, y_train, batch_size=BATCH_SIZE,
-                  verbose=MODEL_VERBOSE, epochs=EPOCH_NUM)
+        model.fit(
+            X_train,
+            y_train,
+            batch_size=BATCH_SIZE,
+            verbose=MODEL_VERBOSE,
+            epochs=EPOCH_NUM)
         score_dict[no] = model.evaluate(
-            X_test, y_test, verbose=EVALUATE_VERBOSE)
+            X_test,
+            y_test,
+            verbose=EVALUATE_VERBOSE)
+
